@@ -7,18 +7,12 @@ export default async function ProductCarouselPage({
 	params: Promise<{ data: string }>;
 }) {
 	console.log("ProductCarouselPage called");
-	const { data } = await params;
-	const decodedData = decodeURIComponent(data);
-	let parsedData;
-	try {
-		parsedData = JSON.parse(decodedData);
-	} catch (error) {
-		console.error(error);
-		parsedData = undefined;
-	}
+	// const { data } = await params;
+	// const decodedData = decodeURIComponent(data);
+	// const parsedData = JSON.parse(decodedData);
 	return (
 		<RemoteComponent name="product-carousel">
-			<ProductCarouselComponent products={parsedData} />
+			<ProductCarouselComponent />
 		</RemoteComponent>
 	);
 }

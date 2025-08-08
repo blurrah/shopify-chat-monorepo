@@ -11,7 +11,10 @@ function ProductDetails({ className, ...props }: React.ComponentProps<"div">) {
 	);
 }
 
-function ProductDetailsHeader({ className, ...props }: React.ComponentProps<"div">) {
+function ProductDetailsHeader({
+	className,
+	...props
+}: React.ComponentProps<"div">) {
 	return (
 		<div
 			data-slot="product-details-header"
@@ -21,7 +24,10 @@ function ProductDetailsHeader({ className, ...props }: React.ComponentProps<"div
 	);
 }
 
-function ProductDetailsTitle({ className, ...props }: React.ComponentProps<"h2">) {
+function ProductDetailsTitle({
+	className,
+	...props
+}: React.ComponentProps<"h2">) {
 	return (
 		<h2
 			data-slot="product-details-title"
@@ -31,8 +37,10 @@ function ProductDetailsTitle({ className, ...props }: React.ComponentProps<"h2">
 	);
 }
 
-function ProductDetailsLink({ className, ...props }: React.ComponentProps<"a">) {
-   
+function ProductDetailsLink({
+	className,
+	...props
+}: React.ComponentProps<"a">) {
 	return (
 		<a
 			data-slot="product-details-link"
@@ -44,17 +52,26 @@ function ProductDetailsLink({ className, ...props }: React.ComponentProps<"a">) 
 	);
 }
 
-function ProductDetailsPricing({ className, ...props }: React.ComponentProps<"div">) {
+function ProductDetailsPricing({
+	className,
+	...props
+}: React.ComponentProps<"div">) {
 	return (
 		<div
 			data-slot="product-details-pricing"
-			className={cn("flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4", className)}
+			className={cn(
+				"flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4",
+				className,
+			)}
 			{...props}
 		/>
 	);
 }
 
-function ProductDetailsPrice({ className, ...props }: React.ComponentProps<"div">) {
+function ProductDetailsPrice({
+	className,
+	...props
+}: React.ComponentProps<"div">) {
 	return (
 		<div
 			data-slot="product-details-price"
@@ -64,7 +81,10 @@ function ProductDetailsPrice({ className, ...props }: React.ComponentProps<"div"
 	);
 }
 
-function ProductDetailsPriceRange({ className, ...props }: React.ComponentProps<"div">) {
+function ProductDetailsPriceRange({
+	className,
+	...props
+}: React.ComponentProps<"div">) {
 	return (
 		<div
 			data-slot="product-details-price-range"
@@ -74,7 +94,10 @@ function ProductDetailsPriceRange({ className, ...props }: React.ComponentProps<
 	);
 }
 
-function ProductDetailsGrid({ className, ...props }: React.ComponentProps<"div">) {
+function ProductDetailsGrid({
+	className,
+	...props
+}: React.ComponentProps<"div">) {
 	return (
 		<div
 			data-slot="product-details-grid"
@@ -84,7 +107,10 @@ function ProductDetailsGrid({ className, ...props }: React.ComponentProps<"div">
 	);
 }
 
-function ProductDetailsImages({ className, ...props }: React.ComponentProps<"div">) {
+function ProductDetailsImages({
+	className,
+	...props
+}: React.ComponentProps<"div">) {
 	return (
 		<div
 			data-slot="product-details-images"
@@ -94,17 +120,26 @@ function ProductDetailsImages({ className, ...props }: React.ComponentProps<"div
 	);
 }
 
-function ProductDetailsMainImage({ className, ...props }: React.ComponentProps<"div">) {
+function ProductDetailsMainImage({
+	className,
+	...props
+}: React.ComponentProps<"div">) {
 	return (
 		<div
 			data-slot="product-details-main-image"
-			className={cn("aspect-square w-full rounded-lg overflow-hidden bg-muted", className)}
+			className={cn(
+				"aspect-square w-full rounded-lg overflow-hidden bg-muted",
+				className,
+			)}
 			{...props}
 		/>
 	);
 }
 
-function ProductDetailsImage({ className, ...props }: React.ComponentProps<"img">) {
+function ProductDetailsImage({
+	className,
+	...props
+}: React.ComponentProps<"img">) {
 	return (
 		<img
 			data-slot="product-details-image"
@@ -114,7 +149,10 @@ function ProductDetailsImage({ className, ...props }: React.ComponentProps<"img"
 	);
 }
 
-function ProductDetailsThumbnails({ className, ...props }: React.ComponentProps<"div">) {
+function ProductDetailsThumbnails({
+	className,
+	...props
+}: React.ComponentProps<"div">) {
 	return (
 		<div
 			data-slot="product-details-thumbnails"
@@ -124,7 +162,10 @@ function ProductDetailsThumbnails({ className, ...props }: React.ComponentProps<
 	);
 }
 
-function ProductDetailsThumbnailGrid({ className, ...props }: React.ComponentProps<"div">) {
+function ProductDetailsThumbnailGrid({
+	className,
+	...props
+}: React.ComponentProps<"div">) {
 	return (
 		<div
 			data-slot="product-details-thumbnail-grid"
@@ -134,7 +175,11 @@ function ProductDetailsThumbnailGrid({ className, ...props }: React.ComponentPro
 	);
 }
 
-function ProductDetailsThumbnail({ className, active, ...props }: React.ComponentProps<"button"> & { active?: boolean }) {
+function ProductDetailsThumbnail({
+	className,
+	active,
+	...props
+}: React.ComponentProps<"button"> & { active?: boolean }) {
 	return (
 		<button
 			data-slot="product-details-thumbnail"
@@ -143,14 +188,17 @@ function ProductDetailsThumbnail({ className, active, ...props }: React.Componen
 				active
 					? "border-primary shadow-md"
 					: "border-border hover:border-muted-foreground",
-				className
+				className,
 			)}
 			{...props}
 		/>
 	);
 }
 
-function ProductDetailsContent({ className, ...props }: React.ComponentProps<"div">) {
+function ProductDetailsContent({
+	className,
+	...props
+}: React.ComponentProps<"div">) {
 	return (
 		<div
 			data-slot="product-details-content"
@@ -160,7 +208,10 @@ function ProductDetailsContent({ className, ...props }: React.ComponentProps<"di
 	);
 }
 
-function ProductDetailsDescription({ className, ...props }: React.ComponentProps<"div">) {
+function ProductDetailsDescription({
+	className,
+	...props
+}: React.ComponentProps<"div">) {
 	return (
 		<div
 			data-slot="product-details-description"
@@ -170,7 +221,10 @@ function ProductDetailsDescription({ className, ...props }: React.ComponentProps
 	);
 }
 
-function ProductDetailsDescriptionTitle({ className, ...props }: React.ComponentProps<"h3">) {
+function ProductDetailsDescriptionTitle({
+	className,
+	...props
+}: React.ComponentProps<"h3">) {
 	return (
 		<h3
 			data-slot="product-details-description-title"
@@ -180,7 +234,10 @@ function ProductDetailsDescriptionTitle({ className, ...props }: React.Component
 	);
 }
 
-function ProductDetailsDescriptionText({ className, ...props }: React.ComponentProps<"p">) {
+function ProductDetailsDescriptionText({
+	className,
+	...props
+}: React.ComponentProps<"p">) {
 	return (
 		<p
 			data-slot="product-details-description-text"
@@ -190,7 +247,10 @@ function ProductDetailsDescriptionText({ className, ...props }: React.ComponentP
 	);
 }
 
-function ProductDetailsOptions({ className, ...props }: React.ComponentProps<"div">) {
+function ProductDetailsOptions({
+	className,
+	...props
+}: React.ComponentProps<"div">) {
 	return (
 		<div
 			data-slot="product-details-options"
@@ -200,7 +260,10 @@ function ProductDetailsOptions({ className, ...props }: React.ComponentProps<"di
 	);
 }
 
-function ProductDetailsOption({ className, ...props }: React.ComponentProps<"div">) {
+function ProductDetailsOption({
+	className,
+	...props
+}: React.ComponentProps<"div">) {
 	return (
 		<div
 			data-slot="product-details-option"
@@ -210,7 +273,10 @@ function ProductDetailsOption({ className, ...props }: React.ComponentProps<"div
 	);
 }
 
-function ProductDetailsOptionLabel({ className, ...props }: React.ComponentProps<"label">) {
+function ProductDetailsOptionLabel({
+	className,
+	...props
+}: React.ComponentProps<"label">) {
 	return (
 		<label
 			data-slot="product-details-option-label"
@@ -220,7 +286,10 @@ function ProductDetailsOptionLabel({ className, ...props }: React.ComponentProps
 	);
 }
 
-function ProductDetailsOptionValues({ className, ...props }: React.ComponentProps<"div">) {
+function ProductDetailsOptionValues({
+	className,
+	...props
+}: React.ComponentProps<"div">) {
 	return (
 		<div
 			data-slot="product-details-option-values"
@@ -230,10 +299,10 @@ function ProductDetailsOptionValues({ className, ...props }: React.ComponentProp
 	);
 }
 
-function ProductDetailsOptionValue({ 
-	className, 
-	selected, 
-	...props 
+function ProductDetailsOptionValue({
+	className,
+	selected,
+	...props
 }: React.ComponentProps<"button"> & { selected?: boolean }) {
 	return (
 		<button
@@ -243,14 +312,17 @@ function ProductDetailsOptionValue({
 				selected
 					? "bg-primary text-primary-foreground border-primary"
 					: "hover:bg-muted border-input",
-				className
+				className,
 			)}
 			{...props}
 		/>
 	);
 }
 
-function ProductDetailsActions({ className, ...props }: React.ComponentProps<"div">) {
+function ProductDetailsActions({
+	className,
+	...props
+}: React.ComponentProps<"div">) {
 	return (
 		<div
 			data-slot="product-details-actions"
