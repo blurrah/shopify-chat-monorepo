@@ -8,10 +8,11 @@ export default async function ProductDetailsPage({
 }) {
 	console.log("ProductDetailsPage called");
 	const { data } = await params;
-	const decodedData = decodeURIComponent(data);
 	let parsedData;
 	try {
+		const decodedData = decodeURIComponent(data);
 		parsedData = JSON.parse(decodedData);
+		console.log("parsedData", parsedData);
 	} catch (error) {
 		console.error(error);
 		parsedData = undefined;

@@ -1,5 +1,5 @@
 import { RemoteComponent } from "remote-components/next";
-import { ProductCarouselComponent } from "@/components/product-carousel";
+import { CartUpdatedComponent } from "@/components/cart-updated";
 
 export default async function ProductCarouselPage({
 	params,
@@ -7,12 +7,12 @@ export default async function ProductCarouselPage({
 	params: Promise<{ data: string }>;
 }) {
 	console.log("ProductCarouselPage called");
-	// const { data } = await params;
-	// const decodedData = decodeURIComponent(data);
-	// const parsedData = JSON.parse(decodedData);
+	const { data } = await params;
+	const decodedData = decodeURIComponent(data);
+	console.log({ decodedData });
 	return (
-		<RemoteComponent name="product-carousel">
-			<ProductCarouselComponent />
+		<RemoteComponent name="cart-update">
+			<CartUpdatedComponent />
 		</RemoteComponent>
 	);
 }

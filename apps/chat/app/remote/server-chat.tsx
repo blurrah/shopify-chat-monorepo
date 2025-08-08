@@ -45,14 +45,13 @@ export function ServerChat({ messages }: { messages: ChatMessage[] }) {
 function ServerMessagePartsHandler({ parts }: { parts: ChatMessage["parts"] }) {
 	return (
 		<div className="space-y-4">
-			{parts.map((part, index) => {
+			{parts.map((part) => {
 				console.log(part);
 				if (part.type === "text") {
 					return <Markdown key={part.text}>{part.text}</Markdown>;
 				}
 
 				if (part.type === "dynamic-tool") {
-					const toolName = part.toolName;
 					const status =
 						part.state === "output-available"
 							? "completed"
@@ -64,47 +63,50 @@ function ServerMessagePartsHandler({ parts }: { parts: ChatMessage["parts"] }) {
 
 					const output = part.output as {
 						remoteComponent?: string;
-						products?: any[];
-						product?: any;
+						products?: unknown[];
+						product?: unknown;
+						cart?: unknown;
 					};
 
 					if (isCompleted && hasOutput && output.remoteComponent) {
-						if (output.remoteComponent.endsWith("/product-carousel")) {
-							const data = encodeURIComponent(JSON.stringify(output.products));
-							const componentPath = output.remoteComponent.replace(
-								"<data>",
-								data,
-							);
-							return (
-								<div key={part.toolCallId}>
-									<RemoteComponent src={componentPath} />
-								</div>
-							);
-						}
+						const componentHandlers: Array<{
+							suffix: string;
+							selectPayload: (o: typeof output) => unknown;
+						}> = [
+							{
+								suffix: "/product-carousel",
+								selectPayload: (o) => o.products,
+							},
+							{
+								suffix: "/product-details",
+								selectPayload: (o) => o.product,
+							},
+							{
+								suffix: "/cart-update",
+								selectPayload: (o) => o.cart,
+							},
+							{
+								suffix: "/cart",
+								selectPayload: (o) => o.cart,
+							},
+						];
 
-						if (output.remoteComponent.endsWith("/product-details")) {
-							const data = encodeURIComponent(JSON.stringify(output.product));
-							const componentPath = output.remoteComponent.replace(
-								"<data>",
-								data,
-							);
-							return (
-								<div key={part.toolCallId}>
-									<RemoteComponent src={componentPath} />
-								</div>
-							);
-						}
-
-						return (
-							<div key={part.toolCallId}>
-								<RemoteComponent
-									src={output.remoteComponent.replace("<data>", "bla")}
-								/>
-							</div>
+						const remoteComponent = output.remoteComponent || "";
+						const matched = componentHandlers.find((h) =>
+							remoteComponent.endsWith(h.suffix),
 						);
-					}
 
-					return null;
+						if (matched) {
+							const payload = matched.selectPayload(output);
+							const data = encodeURIComponent(JSON.stringify(payload));
+							const componentPath = remoteComponent.replace("<data>", data);
+							return (
+								<div key={part.toolCallId}>
+									<RemoteComponent src={componentPath} />
+								</div>
+							);
+						}
+					}
 				}
 
 				return null;

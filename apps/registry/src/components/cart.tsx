@@ -1,55 +1,88 @@
-import { ShoppingCartIcon, ExternalLinkIcon } from "lucide-react";
+import { ExternalLinkIcon, ShoppingCartIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
 	Cart,
-	CartHeader,
-	CartTitle,
-	CartTitleText,
-	CartIcon,
+	CartCheckout,
+	CartContent,
 	CartEmpty,
 	CartEmptyIcon,
 	CartEmptyText,
-	CartContent,
-	CartItems,
+	CartHeader,
+	CartIcon,
 	CartItem,
 	CartItemContent,
-	CartItemTitle,
 	CartItemDetails,
 	CartItemInfo,
 	CartItemPrice,
+	CartItems,
+	CartItemTitle,
 	CartSummary,
 	CartSummaryLabel,
 	CartSummaryTotal,
-	CartCheckout,
+	CartTitle,
+	CartTitleText,
 } from "@/components/ui/cart";
 
-const mockCartItems = [
+interface CartItemData {
+	id: string;
+	title: string;
+	quantity: number;
+	variant?: string;
+	price: number;
+	currency?: string;
+}
+
+interface CartTotal {
+	amount: number | string;
+	currency: string;
+}
+
+interface CartData {
+	items?: CartItemData[];
+	total?: CartTotal;
+	checkoutUrl?: string;
+}
+
+interface CartComponentProps {
+	cart?: CartData;
+}
+
+const mockCartItems: CartItemData[] = [
 	{
 		id: "1",
 		title: "Premium Wireless Headphones",
 		quantity: 1,
 		variant: "Black - Standard",
 		price: 299.99,
-		currency: "$"
+		currency: "$",
 	},
 	{
-		id: "2", 
+		id: "2",
 		title: "Smart Watch Pro",
 		quantity: 2,
 		variant: "Silver - 42mm",
 		price: 399.99,
-		currency: "$"
-	}
+		currency: "$",
+	},
 ];
 
-const mockTotal = {
+const mockTotal: CartTotal = {
 	amount: 1099.97,
-	currency: "$"
+	currency: "$",
 };
 
-export function CartComponent() {
-	const isEmpty = mockCartItems.length === 0;
-	const totalItems = mockCartItems.reduce((sum, item) => sum + item.quantity, 0);
+const mockCart: CartData = {
+	items: mockCartItems,
+	total: mockTotal,
+	checkoutUrl: "https://example.com/checkout",
+};
+
+export function CartComponent({ cart = mockCart }: CartComponentProps) {
+	const items = cart.items || [];
+	const total = cart.total || { amount: 0, currency: "$" };
+	const checkoutUrl = cart.checkoutUrl || "https://example.com/checkout";
+	const isEmpty = items.length === 0;
+	const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
 	return (
 		<Cart className="w-[400px]">
@@ -60,11 +93,7 @@ export function CartComponent() {
 					</CartIcon>
 					<CartTitleText>Shopping Cart</CartTitleText>
 				</CartTitle>
-				{!isEmpty && (
-					<Badge variant="secondary">
-						{totalItems} items
-					</Badge>
-				)}
+				{!isEmpty && <Badge variant="secondary">{totalItems} items</Badge>}
 			</CartHeader>
 
 			{isEmpty ? (
@@ -77,17 +106,18 @@ export function CartComponent() {
 			) : (
 				<CartContent>
 					<CartItems>
-						{mockCartItems.map((item) => (
+						{items.map((item) => (
 							<CartItem key={item.id}>
 								<CartItemContent>
 									<CartItemTitle>{item.title}</CartItemTitle>
 									<CartItemDetails>
 										<CartItemInfo>
 											<span>Qty: {item.quantity}</span>
-											<span>• Variant: {item.variant}</span>
+											{item.variant && <span>• Variant: {item.variant}</span>}
 										</CartItemInfo>
 										<CartItemPrice>
-											{item.currency}{(item.price * item.quantity).toFixed(2)}
+											<span>{item.currency || "$"}</span>
+											<span>{(item.price * item.quantity).toFixed(2)}</span>
 										</CartItemPrice>
 									</CartItemDetails>
 								</CartItemContent>
@@ -98,11 +128,16 @@ export function CartComponent() {
 					<CartSummary>
 						<CartSummaryLabel>Total</CartSummaryLabel>
 						<CartSummaryTotal>
-							{mockTotal.currency}{mockTotal.amount.toFixed(2)}
+							<span>{total.currency}</span>
+							<span>
+								{typeof total.amount === "number"
+									? total.amount.toFixed(2)
+									: total.amount}
+							</span>
 						</CartSummaryTotal>
 					</CartSummary>
 
-					<CartCheckout href="https://example.com/checkout">
+					<CartCheckout href={checkoutUrl}>
 						Proceed to Checkout
 						<ExternalLinkIcon className="size-4" />
 					</CartCheckout>
