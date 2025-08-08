@@ -1,3 +1,4 @@
+"use client";
 import ReactMarkdown from "react-markdown";
 import hardenReactMarkdown from "harden-react-markdown";
 import { allowedOrigins } from "@/lib/ai";

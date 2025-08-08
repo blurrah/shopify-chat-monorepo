@@ -16,6 +16,8 @@ import { MessageInput } from "./message-input";
 import { MessagePartsHandler } from "./message-parts-handler";
 import { OpeningScreen } from "./opening-screen";
 import { SessionList } from "./session-list";
+import Link from "next/link";
+import { Button } from "./ui/button";
 
 const CURRENT_CHAT_ID_KEY = "current-chat-id";
 
@@ -38,9 +40,6 @@ export function Chat({ isDebug = false }: { isDebug?: boolean }) {
 	
 	const { messages, sendMessage, status, setMessages } = useChat<ChatMessage>({
 		id: chatId,
-		body: {
-			id: chatId,
-		},
 	});
 	const [showOpeningScreen, setShowOpeningScreen] = useState(true);
 
@@ -108,7 +107,11 @@ export function Chat({ isDebug = false }: { isDebug?: boolean }) {
 					<div className="flex items-center gap-3">
 						<h1 className="text-lg sm:text-xl font-semibold text-gray-900">
 							Shopify AI Assistant {isDebug ? "DEBUG" : ""}
+							
 						</h1>
+						<Button variant="outline" asChild>
+							<Link href={`/remote?id=${chatId}`}>Remote</Link>
+						</Button>
 					</div>
 					<div className="flex items-center gap-4">
 						<SessionList

@@ -45,6 +45,7 @@ import { tooltip } from "@/app/demo/[name]/ui/tooltip";
 import { productDetails } from "./components/product-details";
 import { cart } from "./components/cart";
 import { cartUpdated } from "./components/cart-updated";
+import { productCarousel } from "./components/product-carousel";
 
 interface Demo {
   name: string; // this must match the `registry.json` name
@@ -69,6 +70,7 @@ export const demos: { [name: string]: Demo } = {
   "product-grid": productGrid,
   "product-card": productCard,
   "product-details": productDetails,
+  "product-carousel": productCarousel,
   "cart": cart,
   "cart-updated": cartUpdated,
   // ui

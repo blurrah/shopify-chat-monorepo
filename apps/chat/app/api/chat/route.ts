@@ -2,6 +2,7 @@ import { after, type NextRequest } from "next/server";
 import {
 	convertToModelMessages,
 	createUIMessageStream,
+	generateId,
 	JsonToSseTransformStream,
 	stepCountIs,
 	streamText,
@@ -61,6 +62,13 @@ const mcpToolOutputSchema = z.object({
 
 type McpToolOutput = z.infer<typeof mcpToolOutputSchema>;
 
+const toolRemoteComponentsMap = new Map<string, string>([
+	["search_shop_catalog", "/components/bla/product-carousel"],
+	["get_product_details", "/components/bla/product-details"],
+	["get_cart", "/components/bla/cart"],
+	["update_cart", "/components/bla/cart-update"],
+]);
+
 /**
  * Wraps Shopify MCP tools and auto-parses JSON responses
  * @param mcpTools MCP tools
@@ -82,7 +90,10 @@ function wrapMCPTools(mcpTools: Record<string, ToolDef>) {
 					try {
 						// Try to parse the JSON string
 						const parsedContent = JSON.parse(result.content[0].text);
-						return parsedContent;
+						return {
+							...parsedContent,
+							remoteComponent: toolRemoteComponentsMap.get(toolName) || undefined,
+						}
 					} catch (error) {
 						// If parsing fails, return the original text
 						console.warn(`Failed to parse JSON for tool ${toolName}:`, error);
@@ -134,6 +145,11 @@ export async function POST(req: NextRequest) {
 
 	const stream = createUIMessageStream({
 		execute: async ({ writer }) => {
+			writer.write({
+				type: "start",
+				messageId: generateId(),
+			});
+
 			const result = streamText({
 				model: "openai/gpt-4o",
 				stopWhen: stepCountIs(10),
@@ -142,11 +158,11 @@ export async function POST(req: NextRequest) {
 				system: systemPrompt,
 			});
 
-			writer.merge(result.toUIMessageStream());
+			writer.merge(result.toUIMessageStream({ sendStart: false }));
 		},
-		onFinish: async ({ messages }) => {
+		onFinish: async ({ messages: newMessages }) => {
 			try {
-				await redisStorage.saveMessages(sessionId, messages);
+				await redisStorage.saveMessages(sessionId, [...messages, ...newMessages]);
 			} catch (error) {
 				console.error("Failed to save messages to Redis:", error);
 			}
