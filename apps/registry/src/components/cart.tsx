@@ -23,66 +23,134 @@ import {
 	CartTitleText,
 } from "@/components/ui/cart";
 
-interface CartItemData {
+// Shopify cart types
+interface ShopifyCartLine {
 	id: string;
-	title: string;
 	quantity: number;
-	variant?: string;
-	price: number;
-	currency?: string;
+	cost: {
+		total_amount: {
+			amount: string;
+			currency: string;
+		};
+		subtotal_amount: {
+			amount: string;
+			currency: string;
+		};
+	};
+	merchandise: {
+		id: string;
+		title: string;
+		product: {
+			id: string;
+			title: string;
+		};
+	};
 }
 
-interface CartTotal {
-	amount: number | string;
-	currency: string;
-}
-
-interface CartData {
-	items?: CartItemData[];
-	total?: CartTotal;
-	checkoutUrl?: string;
+interface ShopifyCart {
+	id: string;
+	created_at: string;
+	updated_at: string;
+	lines: ShopifyCartLine[];
+	delivery: Record<string, any>;
+	discounts: Record<string, any>;
+	gift_cards: any[];
+	cost: {
+		total_amount: {
+			amount: string;
+			currency: string;
+		};
+		subtotal_amount: {
+			amount: string;
+			currency: string;
+		};
+		total_tax_amount?: {
+			amount: string;
+			currency: string;
+		};
+	};
+	total_quantity: number;
+	checkout_url: string;
 }
 
 interface CartComponentProps {
-	cart?: CartData;
+	instructions?: string;
+	cart?: ShopifyCart;
+	errors?: any[];
 }
 
-const mockCartItems: CartItemData[] = [
-	{
-		id: "1",
-		title: "Premium Wireless Headphones",
-		quantity: 1,
-		variant: "Black - Standard",
-		price: 299.99,
-		currency: "$",
+// Mock Shopify cart data based on the example provided
+const mockCart: ShopifyCart = {
+	id: "gid://shopify/Cart/hWN1YuVAnGXUipguqgELC4kV?key=c8fe3d5a36146ec30e34c140a072b4bc",
+	created_at: "2025-08-08T12:23:51.696Z",
+	updated_at: "2025-08-08T12:23:51.696Z",
+	lines: [
+		{
+			id: "gid://shopify/CartLine/05aff3c5-d3fe-4dd8-b257-327c607ad906?cart=hWN1YuVAnGXUipguqgELC4kV",
+			quantity: 1,
+			cost: {
+				total_amount: {
+					amount: "19.95",
+					currency: "USD"
+				},
+				subtotal_amount: {
+					amount: "19.95",
+					currency: "USD"
+				}
+			},
+			merchandise: {
+				id: "gid://shopify/ProductVariant/14574992523362",
+				title: "3.5 oz (100g) Tin",
+				product: {
+					id: "gid://shopify/Product/1614972518498",
+					title: "Culinary Grade Matcha Powder"
+				}
+			}
+		}
+	],
+	delivery: {},
+	discounts: {},
+	gift_cards: [],
+	cost: {
+		total_amount: {
+			amount: "19.95",
+			currency: "USD"
+		},
+		subtotal_amount: {
+			amount: "19.95",
+			currency: "USD"
+		},
+		total_tax_amount: {
+			amount: "0.0",
+			currency: "USD"
+		}
 	},
-	{
-		id: "2",
-		title: "Smart Watch Pro",
-		quantity: 2,
-		variant: "Silver - 42mm",
-		price: 399.99,
-		currency: "$",
-	},
-];
-
-const mockTotal: CartTotal = {
-	amount: 1099.97,
-	currency: "$",
+	total_quantity: 1,
+	checkout_url: "https://itoen.com/cart/c/hWN1YuVAnGXUipguqgELC4kV?key=c8fe3d5a36146ec30e34c140a072b4bc"
 };
 
-const mockCart: CartData = {
-	items: mockCartItems,
-	total: mockTotal,
-	checkoutUrl: "https://example.com/checkout",
-};
+function formatCurrency(currency: string): string {
+	// Map common currency codes to symbols
+	const currencySymbols: Record<string, string> = {
+		USD: "$",
+		EUR: "€",
+		GBP: "£",
+		CAD: "$",
+		AUD: "$",
+		JPY: "¥",
+	};
+	return currencySymbols[currency] || currency;
+}
 
-export function CartComponent({ cart = mockCart }: CartComponentProps) {
-	const items = cart.items || [];
-	const total = cart.total || { amount: 0, currency: "$" };
-	const checkoutUrl = cart.checkoutUrl || "https://example.com/checkout";
-	const isEmpty = items.length === 0;
-	const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+export function CartComponent({ 
+	instructions = "Your shopping cart",
+	cart = mockCart,
+	errors = []
+}: CartComponentProps) {
+	const isEmpty = cart.lines.length === 0;
+	const totalItems = cart.total_quantity;
+	const currencySymbol = formatCurrency(cart.cost.total_amount.currency);
+	const hasErrors = errors && errors.length > 0;
 
 	return (
 		<Cart className="w-[400px]">
@@ -91,9 +159,13 @@ export function CartComponent({ cart = mockCart }: CartComponentProps) {
 					<CartIcon>
 						<ShoppingCartIcon className="size-4 text-muted-foreground" />
 					</CartIcon>
-					<CartTitleText>Shopping Cart</CartTitleText>
+					<CartTitleText>{instructions}</CartTitleText>
 				</CartTitle>
-				{!isEmpty && <Badge variant="secondary">{totalItems} items</Badge>}
+				{!isEmpty && (
+					<Badge variant="secondary">
+						{totalItems} {totalItems === 1 ? 'item' : 'items'}
+					</Badge>
+				)}
 			</CartHeader>
 
 			{isEmpty ? (
@@ -106,38 +178,83 @@ export function CartComponent({ cart = mockCart }: CartComponentProps) {
 			) : (
 				<CartContent>
 					<CartItems>
-						{items.map((item) => (
-							<CartItem key={item.id}>
-								<CartItemContent>
-									<CartItemTitle>{item.title}</CartItemTitle>
-									<CartItemDetails>
-										<CartItemInfo>
-											<span>Qty: {item.quantity}</span>
-											{item.variant && <span>• Variant: {item.variant}</span>}
-										</CartItemInfo>
-										<CartItemPrice>
-											<span>{item.currency || "$"}</span>
-											<span>{(item.price * item.quantity).toFixed(2)}</span>
-										</CartItemPrice>
-									</CartItemDetails>
-								</CartItemContent>
-							</CartItem>
-						))}
+						{cart.lines.map((line) => {
+							const unitPrice = parseFloat(line.cost.subtotal_amount.amount) / line.quantity;
+							return (
+								<CartItem key={line.id}>
+									<CartItemContent>
+										<CartItemTitle>
+											{line.merchandise.product.title}
+										</CartItemTitle>
+										<CartItemDetails>
+											<CartItemInfo>
+												<span>Qty: {line.quantity}</span>
+												{line.merchandise.title !== line.merchandise.product.title && (
+													<span>• {line.merchandise.title}</span>
+												)}
+											</CartItemInfo>
+											<CartItemPrice>
+												<span>{currencySymbol}</span>
+												<span>{line.cost.total_amount.amount}</span>
+												{line.quantity > 1 && (
+													<span className="text-xs text-muted-foreground ml-1">
+														(<span>{currencySymbol}</span>
+														<span>{unitPrice.toFixed(2)}</span> each)
+													</span>
+												)}
+											</CartItemPrice>
+										</CartItemDetails>
+									</CartItemContent>
+								</CartItem>
+							);
+						})}
 					</CartItems>
 
 					<CartSummary>
-						<CartSummaryLabel>Total</CartSummaryLabel>
-						<CartSummaryTotal>
-							<span>{total.currency}</span>
-							<span>
-								{typeof total.amount === "number"
-									? total.amount.toFixed(2)
-									: total.amount}
-							</span>
+						<CartSummaryLabel>
+							<div className="space-y-1">
+								<div className="flex justify-between text-sm text-muted-foreground">
+									<span>Subtotal</span>
+									<span>
+										<span>{currencySymbol}</span>
+										<span>{cart.cost.subtotal_amount.amount}</span>
+									</span>
+								</div>
+								{cart.cost.total_tax_amount && parseFloat(cart.cost.total_tax_amount.amount) > 0 && (
+									<div className="flex justify-between text-sm text-muted-foreground">
+										<span>Tax</span>
+										<span>
+											<span>{currencySymbol}</span>
+											<span>{cart.cost.total_tax_amount.amount}</span>
+										</span>
+									</div>
+								)}
+								<div className="flex justify-between font-semibold pt-1 border-t">
+									<span>Total</span>
+									<span>
+										<span>{currencySymbol}</span>
+										<span>{cart.cost.total_amount.amount}</span>
+									</span>
+								</div>
+							</div>
+						</CartSummaryLabel>
+						<CartSummaryTotal className="sr-only">
+							<span>{currencySymbol}</span>
+							<span>{cart.cost.total_amount.amount}</span>
 						</CartSummaryTotal>
 					</CartSummary>
 
-					<CartCheckout href={checkoutUrl}>
+					{hasErrors && (
+						<div className="px-6 py-3 border-t">
+							<div className="text-sm text-destructive">
+								{errors.map((error, index) => (
+									<div key={index}>{JSON.stringify(error)}</div>
+								))}
+							</div>
+						</div>
+					)}
+
+					<CartCheckout href={cart.checkout_url}>
 						Proceed to Checkout
 						<ExternalLinkIcon className="size-4" />
 					</CartCheckout>
