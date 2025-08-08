@@ -4,6 +4,7 @@ import { AIMessage, AIMessageContent } from "@/components/ui/kibo-ui/ai/message"
 import { ChatMessage } from "@/lib/types";
 import { RemoteComponent } from "remote-components/next/host";
 
+
 export function ServerChat({messages}: {messages: ChatMessage[]}) {
     return (
         <div className="flex flex-col h-screen bg-gray-50">
@@ -50,9 +51,19 @@ function ServerMessagePartsHandler({parts}: {parts: ChatMessage["parts"]}) {
                     const isCompleted = status === "completed";
                     const hasOutput = part.output !== undefined;
 
-                    if (isCompleted && hasOutput && toolName === "search_shop_catalog") {
-                        return <div key={part.toolCallId} data-slot="carosdausel"><RemoteComponent src="/components/bla/product-carousel" /></div>;
+                    const output = part.output as { remoteComponent?: string, products?: any[] };
+
+                    if (isCompleted && hasOutput && output.remoteComponent) {
+                        if (output.remoteComponent.endsWith("/product-carousel")) {
+                            const data = encodeURIComponent(JSON.stringify(output.products));
+                            const componentPath = output.remoteComponent.replace("<data>", data);
+                            return <div key={part.toolCallId}><RemoteComponent src={componentPath} /></div>;
+                        }
+
+                        return <div key={part.toolCallId}><RemoteComponent src={output.remoteComponent} /></div>;
                     }
+
+                    return null;
                 }
 
                 return null;

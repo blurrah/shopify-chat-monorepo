@@ -63,10 +63,10 @@ const mcpToolOutputSchema = z.object({
 type McpToolOutput = z.infer<typeof mcpToolOutputSchema>;
 
 const toolRemoteComponentsMap = new Map<string, string>([
-	["search_shop_catalog", "/components/bla/product-carousel"],
-	["get_product_details", "/components/bla/product-details"],
-	["get_cart", "/components/bla/cart"],
-	["update_cart", "/components/bla/cart-update"],
+	["search_shop_catalog", "/components/<data>/product-carousel"],
+	["get_product_details", "/components/<data>/product-details"],
+	["get_cart", "/components/<data>/cart"],
+	["update_cart", "/components/<data>/cart-update"],
 ]);
 
 /**
