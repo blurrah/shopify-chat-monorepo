@@ -1,0 +1,17 @@
+{
+    "$schema": "https://openapi.vercel.sh/microfrontends.json",
+    "applications": {
+        "ecom-chat-components": {
+            "routing": [
+                {
+                    "paths": [
+                        "/components/:path*"
+                    ]
+                }
+            ],
+            "development": {
+                "local": 3030
+            }
+        }
+    }
+}

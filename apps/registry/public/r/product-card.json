@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "product-card",
+  "type": "registry:component",
+  "title": "Product Card",
+  "description": "Product card displaying a single product",
+  "registryDependencies": [
+    "button",
+    "https://registry-starter.vercel.app/r/theme.json"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/product-card.tsx",
+      "content": "import type * as React from \"react\";\n\nimport { cn } from \"@/lib/utils\";\n\nfunction ProductCard({ className, ...props }: React.ComponentProps<\"div\">) {\n\treturn (\n\t\t<div\n\t\t\tdata-slot=\"product-card\"\n\t\t\tclassName={cn(\n\t\t\t\t\"rounded-lg border p-4 hover:bg-muted/50 transition-colors h-full flex flex-col\",\n\t\t\t\tclassName,\n\t\t\t)}\n\t\t\t{...props}\n\t\t/>\n\t);\n}\n\nfunction ProductCardImage({ className, ...props }: React.ComponentProps<\"img\">) {\n\treturn (\n\t\t<img\n\t\t\tdata-slot=\"product-card-image\"\n\t\t\tclassName={cn(\"w-full h-48 rounded-md object-cover mb-3\", className)}\n\t\t\t{...props}\n\t\t/>\n\t);\n}\n\nfunction ProductCardContent({ className, ...props }: React.ComponentProps<\"div\">) {\n\treturn (\n\t\t<div\n\t\t\tdata-slot=\"product-card-content\"\n\t\t\tclassName={cn(\"space-y-2 flex-1 flex flex-col\", className)}\n\t\t\t{...props}\n\t\t/>\n\t);\n}\n\nfunction ProductCardTitle({ className, ...props }: React.ComponentProps<\"h5\">) {\n\treturn (\n\t\t<h5\n\t\t\tdata-slot=\"product-card-title\"\n\t\t\tclassName={cn(\"font-medium text-sm line-clamp-2\", className)}\n\t\t\t{...props}\n\t\t/>\n\t);\n}\n\nfunction ProductCardPrice({ className, ...props }: React.ComponentProps<\"div\">) {\n\treturn (\n\t\t<div\n\t\t\tdata-slot=\"product-card-price\"\n\t\t\tclassName={cn(\"flex items-center justify-between\", className)}\n\t\t\t{...props}\n\t\t/>\n\t);\n}\n\nfunction ProductCardPriceText({ className, ...props }: React.ComponentProps<\"span\">) {\n\treturn (\n\t\t<span\n\t\t\tdata-slot=\"product-card-price-text\"\n\t\t\tclassName={cn(\"font-semibold text-base\", className)}\n\t\t\t{...props}\n\t\t/>\n\t);\n}\n\nfunction ProductCardDescription({ className, ...props }: React.ComponentProps<\"p\">) {\n\treturn (\n\t\t<p\n\t\t\tdata-slot=\"product-card-description\"\n\t\t\tclassName={cn(\"text-muted-foreground text-xs line-clamp-3\", className)}\n\t\t\t{...props}\n\t\t/>\n\t);\n}\n\nfunction ProductCardActions({ className, ...props }: React.ComponentProps<\"div\">) {\n\treturn (\n\t\t<div\n\t\t\tdata-slot=\"product-card-actions\"\n\t\t\tclassName={cn(\"flex flex-col gap-2 mt-auto\", className)}\n\t\t\t{...props}\n\t\t/>\n\t);\n}\n\nfunction ProductCardLink({ className, ...props }: React.ComponentProps<\"a\">) {\n\treturn (\n\t\t<a\n\t\t\tdata-slot=\"product-card-link\"\n\t\t\tclassName={cn(\n\t\t\t\t\"text-primary hover:underline text-sm font-medium inline-block\",\n\t\t\t\tclassName,\n\t\t\t)}\n\t\t\ttarget=\"_blank\"\n\t\t\trel=\"noopener noreferrer\"\n\t\t\t{...props}\n\t\t/>\n\t);\n}\n\nexport {\n\tProductCard,\n\tProductCardImage,\n\tProductCardContent,\n\tProductCardTitle,\n\tProductCardPrice,\n\tProductCardDescription,\n\tProductCardActions,\n\tProductCardLink,\n};",
+      "type": "registry:component"
+    },
+    {
+      "path": "src/v0/minimal-layout.tsx",
+      "content": "import { Geist, Geist_Mono, Montserrat } from \"next/font/google\";\nimport React, { type ReactNode } from \"react\";\n\nimport { cn } from \"@/lib/utils\";\n\nimport \"@/app/tokens.css\";\nimport \"@/app/globals.css\";\n\nconst GeistSans = Geist({\n  subsets: [\"latin\"],\n  variable: \"--font-sans\",\n});\n\nconst GeistMono = Geist_Mono({\n  subsets: [\"latin\"],\n  variable: \"--font-mono\",\n});\n\nconst MontserratSerif = Montserrat({\n  subsets: [\"latin\"],\n  variable: \"--font-serif\",\n});\n\nexport default function RootLayout({\n  children,\n}: Readonly<{\n  children: ReactNode;\n}>) {\n  return (\n    <html\n      lang=\"en\"\n      className={cn(\n        GeistSans.variable,\n        GeistMono.variable,\n        MontserratSerif.variable,\n        \"bg-background text-foreground\",\n      )}\n    >\n      <body>\n        <main className=\"mt-16 flex w-full justify-center\">\n          <div className=\"container\">{children}</div>\n        </main>\n      </body>\n    </html>\n  );\n}\n",
+      "type": "registry:file",
+      "target": "app/layout.tsx"
+    }
+  ]
+}
