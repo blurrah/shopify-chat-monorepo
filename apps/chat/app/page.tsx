@@ -8,7 +8,9 @@ export default async function Home() {
 
 	return (
 		<div className="h-screen w-full">
-			<RemoteComponent src="/components/bla/product-details" />
+			<div className="flex flex-col gap-4 bg-white">
+				<RemoteComponent src="/components/bla/product-details" />
+			</div>
 			<Chat isDebug={isDebug} />
 		</div>
 	);

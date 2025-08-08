@@ -1,3 +1,4 @@
+"use client";
 import { Badge } from "@/components/ui/badge";
 import {
 	ProductDetails,
@@ -20,8 +21,11 @@ import {
 	ProductDetailsDescriptionText,
 	ProductDetailsOptions,
 	ProductDetailsOption,
-	ProductDetailsOptionLabel, ProductDetailsActions
+	ProductDetailsOptionLabel, ProductDetailsActions,
+	ProductDetailsOptionValue,
+	ProductDetailsOptionValues
 } from "@/components/ui/product-details";
+import { Button } from "./ui/button";
 
 const productImages = [
 	{
@@ -40,6 +44,7 @@ const productImages = [
 
 export function ProductDetailsServerComponent() {
 	const defaultPrice = 299.99;
+	
 	return (
 		<ProductDetails>
 			<ProductDetailsHeader>
@@ -49,7 +54,7 @@ export function ProductDetailsServerComponent() {
 					</ProductDetailsLink>
 				</ProductDetailsTitle>
 				<ProductDetailsPricing>
-					<ProductDetailsPrice>299.99</ProductDetailsPrice>
+					<ProductDetailsPrice>{defaultPrice}</ProductDetailsPrice>
 					<ProductDetailsPriceRange>
 						Range: $249.99 - $349.99
 					</ProductDetailsPriceRange>
@@ -96,7 +101,7 @@ export function ProductDetailsServerComponent() {
 					<ProductDetailsOptions>
 						<ProductDetailsOption>
 							<ProductDetailsOptionLabel>Color</ProductDetailsOptionLabel>
-							{/* <ProductDetailsOptionValues>
+							<ProductDetailsOptionValues>
 								{["Black", "White", "Silver"].map(color => (
 									<ProductDetailsOptionValue
 										key={color}
@@ -105,11 +110,11 @@ export function ProductDetailsServerComponent() {
 										{color}
 									</ProductDetailsOptionValue>
 								))}
-							</ProductDetailsOptionValues> */}
+							</ProductDetailsOptionValues>
 						</ProductDetailsOption>
 						<ProductDetailsOption>
 							<ProductDetailsOptionLabel>Size</ProductDetailsOptionLabel>
-							{/* <ProductDetailsOptionValues>
+							<ProductDetailsOptionValues>
 								{["Standard", "Large"].map(size => (
 									<ProductDetailsOptionValue
 										key={size}
@@ -118,12 +123,12 @@ export function ProductDetailsServerComponent() {
 										{size}
 									</ProductDetailsOptionValue>
 								))}
-							</ProductDetailsOptionValues> */}
+							</ProductDetailsOptionValues>
 						</ProductDetailsOption>
 					</ProductDetailsOptions>
 
 					<ProductDetailsActions>
-						{/* <Button 
+						<Button 
 							size="lg" 
 							className="w-full"
 						>
@@ -135,7 +140,7 @@ export function ProductDetailsServerComponent() {
 							className="w-full"
 						>
 							Find Similar Products
-						</Button> */}
+						</Button>
 					</ProductDetailsActions>
 				</ProductDetailsContent>
 			</ProductDetailsGrid>
