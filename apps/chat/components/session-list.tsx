@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { MessageSquare, Trash2, Plus } from "lucide-react";
-import type { ChatSession } from "@/lib/chat-storage";
-import { useChatPersistence } from "@/hooks/use-chat-persistence";
+import type { ChatSession } from "@/lib/redis";
 import { Button } from "@/components/ui/button";
 
 interface SessionListProps {
@@ -19,29 +18,42 @@ export function SessionList({
 }: SessionListProps) {
 	const [sessions, setSessions] = useState<ChatSession[]>([]);
 	const [isOpen, setIsOpen] = useState(false);
-	const { getAllSessions, deleteCurrentSession } = useChatPersistence();
 
 	// Load sessions on mount and when currentSessionId changes
 	useEffect(() => {
 		const loadSessions = async () => {
-			const allSessions = await getAllSessions();
-			setSessions(allSessions);
+			try {
+				const response = await fetch("/api/chat/sessions");
+				if (response.ok) {
+					const data = await response.json();
+					setSessions(data.sessions || []);
+				}
+			} catch (error) {
+				console.error("Failed to load sessions:", error);
+			}
 		};
 
 		loadSessions();
-	}, [getAllSessions, currentSessionId]);
+	}, [currentSessionId]);
 
 	// Also load when dropdown opens to ensure fresh data
 	useEffect(() => {
 		const loadSessions = async () => {
-			const allSessions = await getAllSessions();
-			setSessions(allSessions);
+			try {
+				const response = await fetch("/api/chat/sessions");
+				if (response.ok) {
+					const data = await response.json();
+					setSessions(data.sessions || []);
+				}
+			} catch (error) {
+				console.error("Failed to load sessions:", error);
+			}
 		};
 
 		if (isOpen) {
 			loadSessions();
 		}
-	}, [isOpen, getAllSessions]);
+	}, [isOpen]);
 
 	const handleDeleteSession = async (
 		sessionId: string,
@@ -49,17 +61,27 @@ export function SessionList({
 	) => {
 		event.stopPropagation();
 
-		if (sessionId === currentSessionId) {
-			await deleteCurrentSession();
-		} else {
-			// For non-current sessions, we need to delete directly from storage
-			const { chatStorage } = await import("@/lib/chat-storage");
-			await chatStorage.deleteSession(sessionId);
+		try {
+			const response = await fetch(`/api/chat/sessions/${sessionId}`, {
+				method: "DELETE",
+			});
+			
+			if (response.ok) {
+				// Refresh sessions list
+				const sessionsResponse = await fetch("/api/chat/sessions");
+				if (sessionsResponse.ok) {
+					const data = await sessionsResponse.json();
+					setSessions(data.sessions || []);
+				}
+				
+				// If we deleted the current session, trigger new session
+				if (sessionId === currentSessionId) {
+					onNewSession();
+				}
+			}
+		} catch (error) {
+			console.error("Failed to delete session:", error);
 		}
-
-		// Refresh sessions list
-		const allSessions = await getAllSessions();
-		setSessions(allSessions);
 	};
 
 	const formatDate = (date: Date) => {

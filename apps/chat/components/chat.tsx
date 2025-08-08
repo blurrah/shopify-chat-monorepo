@@ -16,43 +16,61 @@ import { MessageInput } from "./message-input";
 import { MessagePartsHandler } from "./message-parts-handler";
 import { OpeningScreen } from "./opening-screen";
 import { SessionList } from "./session-list";
-import { useChatPersistence } from "@/hooks/use-chat-persistence";
+
+const CURRENT_CHAT_ID_KEY = "current-chat-id";
 
 export function Chat({ isDebug = false }: { isDebug?: boolean }) {
-	const { messages, sendMessage, status, setMessages } = useChat<ChatMessage>();
-	const [showOpeningScreen, setShowOpeningScreen] = useState(true);
-	const {
-		sessionId,
-		isLoading: isPersistenceLoading,
-		saveMessages,
-		loadMessages,
-		startNewSession,
-		loadSession,
-	} = useChatPersistence();
-
-	// Load persisted messages when session changes
+	const [chatId, setChatId] = useState<string>("");
+	const [isInitialized, setIsInitialized] = useState(false);
+	
+	// Initialize chat ID from localStorage
 	useEffect(() => {
-		const loadPersistedMessages = async () => {
-			if (isPersistenceLoading || !sessionId) return;
+		const storedChatId = localStorage.getItem(CURRENT_CHAT_ID_KEY);
+		if (storedChatId) {
+			setChatId(storedChatId);
+		} else {
+			const newChatId = `chat-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+			localStorage.setItem(CURRENT_CHAT_ID_KEY, newChatId);
+			setChatId(newChatId);
+		}
+		setIsInitialized(true);
+	}, []);
+	
+	const { messages, sendMessage, status, setMessages } = useChat<ChatMessage>({
+		id: chatId,
+		body: {
+			id: chatId,
+		},
+	});
+	const [showOpeningScreen, setShowOpeningScreen] = useState(true);
 
+	// Load messages from Redis when chat ID changes
+	useEffect(() => {
+		const loadMessages = async () => {
+			if (!chatId || !isInitialized) return;
+			
 			try {
-				const persistedMessages = await loadMessages();
-				setMessages(persistedMessages);
-				setShowOpeningScreen(persistedMessages.length === 0);
+				const response = await fetch(`/api/chat/sessions/${chatId}`);
+				if (response.ok) {
+					const data = await response.json();
+					if (data.session?.messages) {
+						setMessages(data.session.messages);
+						setShowOpeningScreen(data.session.messages.length === 0);
+					} else {
+						setShowOpeningScreen(true);
+					}
+				} else if (response.status === 404) {
+					// Session doesn't exist yet, show opening screen
+					setShowOpeningScreen(true);
+				}
 			} catch (error) {
-				console.error("Failed to load persisted messages:", error);
+				console.error("Failed to load messages:", error);
+				setShowOpeningScreen(true);
 			}
 		};
-
-		loadPersistedMessages();
-	}, [sessionId, isPersistenceLoading, loadMessages, setMessages]);
-
-	// Save messages whenever they change
-	useEffect(() => {
-		if (messages.length > 0 && !isPersistenceLoading) {
-			saveMessages(messages);
-		}
-	}, [messages, saveMessages, isPersistenceLoading]);
+		
+		loadMessages();
+	}, [chatId, isInitialized, setMessages]);
 
 	const handleOpeningSubmit = (message: string) => {
 		setShowOpeningScreen(false);
@@ -60,16 +78,24 @@ export function Chat({ isDebug = false }: { isDebug?: boolean }) {
 	};
 
 	const handleNewSession = () => {
-		startNewSession();
+		const newChatId = `chat-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+		localStorage.setItem(CURRENT_CHAT_ID_KEY, newChatId);
+		setChatId(newChatId);
 		setMessages([]);
 		setShowOpeningScreen(true);
 	};
 
 	const handleSessionSelect = (targetSessionId: string) => {
-		if (targetSessionId === sessionId) return;
-		loadSession(targetSessionId);
+		if (targetSessionId === chatId) return;
+		localStorage.setItem(CURRENT_CHAT_ID_KEY, targetSessionId);
+		setChatId(targetSessionId);
 	};
 
+	// Don't render until we've initialized the chat ID
+	if (!isInitialized) {
+		return null;
+	}
+	
 	if (showOpeningScreen) {
 		return <OpeningScreen onSubmit={handleOpeningSubmit} />;
 	}
@@ -86,7 +112,7 @@ export function Chat({ isDebug = false }: { isDebug?: boolean }) {
 					</div>
 					<div className="flex items-center gap-4">
 						<SessionList
-							currentSessionId={sessionId}
+							currentSessionId={chatId}
 							onSessionSelect={handleSessionSelect}
 							onNewSession={handleNewSession}
 						/>

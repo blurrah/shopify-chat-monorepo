@@ -10,7 +10,9 @@
       "routing": [
         {
           "paths": [
-            "/components/:path*"
+            "/components/:path*",
+            "/demo/:path*",
+            "/registry/:path*"
           ]
         }
       ]

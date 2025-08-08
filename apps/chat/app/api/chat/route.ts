@@ -5,6 +5,7 @@ import {
 	JsonToSseTransformStream,
 	stepCountIs,
 	streamText,
+	type UIMessage,
 } from "ai";
 import { experimental_createMCPClient as createMCPClient } from "ai";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
@@ -15,6 +16,8 @@ import {
 	type ResumableStreamContext,
 } from "resumable-stream";
 import { nanoid } from "nanoid";
+import { redisStorage } from "@/lib/redis";
+import type { ChatMessage } from "@/lib/types";
 
 export const maxDuration = 60;
 
@@ -97,7 +100,10 @@ function wrapMCPTools(mcpTools: Record<string, ToolDef>) {
 }
 
 export async function POST(req: NextRequest) {
-	const { messages } = await req.json();
+	const { messages, id: chatId } = await req.json();
+
+	// Use the chat ID from the client or generate one
+	const sessionId = chatId || `chat-${Date.now()}-${nanoid(9)}`;
 
 	const mcpClient = await createMCPClient({
 		transport: new StreamableHTTPClientTransport(
@@ -115,8 +121,19 @@ export async function POST(req: NextRequest) {
 
 	const streamId = nanoid();
 
+	// Load existing messages from Redis if this is an existing session
+	let allMessages: UIMessage[] = [];
+	if (sessionId) {
+		try {
+			const existingMessages = await redisStorage.loadMessages(sessionId);
+			allMessages = existingMessages as UIMessage[];
+		} catch (error) {
+			console.error("Failed to load existing messages:", error);
+		}
+	}
+
 	const stream = createUIMessageStream({
-		execute: ({ writer }) => {
+		execute: async ({ writer }) => {
 			const result = streamText({
 				model: "openai/gpt-4o",
 				stopWhen: stepCountIs(10),
@@ -125,12 +142,16 @@ export async function POST(req: NextRequest) {
 				system: systemPrompt,
 			});
 
-			result.consumeStream();
-
 			writer.merge(result.toUIMessageStream());
 		},
+		onFinish: async ({ messages }) => {
+			try {
+				await redisStorage.saveMessages(sessionId, messages);
+			} catch (error) {
+				console.error("Failed to save messages to Redis:", error);
+			}
+		},
 	});
-	// This doesn't do much yet as there's no persistence but still
 	const streamContext = getStreamContext();
 
 	if (streamContext) {
