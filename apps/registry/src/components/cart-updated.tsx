@@ -1,3 +1,5 @@
+"use client";
+
 import {
 	CheckCircleIcon,
 	MinusIcon,
@@ -5,6 +7,7 @@ import {
 	ShoppingCartIcon,
 	XIcon,
 } from "lucide-react";
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import {
 	CartUpdated,
@@ -225,6 +228,7 @@ export function CartUpdatedComponent({
 	errors = [],
 	updatedItems = mockUpdatedItems,
 }: CartUpdatedComponentProps) {
+	useState("hello");
 	const hasErrors = errors && errors.length > 0;
 	const currencySymbol = formatCurrency(cart.cost.total_amount.currency);
 
@@ -256,23 +260,19 @@ export function CartUpdatedComponent({
 									</CartUpdatedItemIcon>
 									<CartUpdatedItemContent>
 										<CartUpdatedItemTitle>
-											<span>{item.title}</span>
-											<span>
-												{item.variant && (
-													<span className="text-muted-foreground text-sm ml-2">
-														({item.variant})
-													</span>
-												)}
-											</span>
+											{item.title}
+											{item.variant && (
+												<span className="text-muted-foreground text-sm ml-2">
+													({item.variant})
+												</span>
+											)}
 										</CartUpdatedItemTitle>
 										<CartUpdatedItemDetails>
-											<span>
-												{getActionText(
-													item.action,
-													item.quantity,
-													item.previousQuantity,
-												)}
-											</span>
+											{getActionText(
+												item.action,
+												item.quantity,
+												item.previousQuantity,
+											)}
 										</CartUpdatedItemDetails>
 									</CartUpdatedItemContent>
 									<CartUpdatedItemBadge>
@@ -302,8 +302,8 @@ export function CartUpdatedComponent({
 							<div className="flex justify-between text-sm">
 								<span className="text-muted-foreground">Tax</span>
 								<span>
-									<span>{currencySymbol}</span>
-									<span>{cart.cost.total_tax_amount.amount}</span>
+									{currencySymbol}
+									{cart.cost.total_tax_amount.amount}
 								</span>
 							</div>
 						)}

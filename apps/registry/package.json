@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "pnpm registry:build && next dev --turbopack --port $(microfrontends port)",
+    "dev": "pnpm registry:build && next dev   --port $(microfrontends port)",
     "build": "pnpm registry:build && next build",
     "start": "next start",
     "lint": "biome check",
@@ -58,7 +58,7 @@
     "react-hook-form": "^7.60.0",
     "react-resizable-panels": "^3.0.3",
     "recharts": "^2.15.4",
-    "remote-components": "^0.0.6",
+    "remote-components": "^0.0.13",
     "sonner": "^2.0.6",
     "tailwind-merge": "^3.3.1",
     "vaul": "^1.1.2",

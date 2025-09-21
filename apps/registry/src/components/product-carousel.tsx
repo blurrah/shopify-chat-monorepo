@@ -131,14 +131,14 @@ export function ProductCarouselComponent({
 									<ProductCardActions>
 										{product.url && (
 											<ProductCardLink href={product.url}>
-												View Product →
+												View Product → hello
 											</ProductCardLink>
 										)}
 										<Button size="sm" className="w-full">
-											Add to Cart
+											Add to Cart :D
 										</Button>
 										<Button size="sm" className="w-full" variant="outline">
-											Get product details
+											Get product details :)
 										</Button>
 									</ProductCardActions>
 								</ProductCardContent>

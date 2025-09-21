@@ -3,7 +3,7 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
-		"dev": "next dev --turbopack --port $(microfrontends port)",
+		"dev": "next dev   --port $(microfrontends port)",
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
@@ -41,7 +41,7 @@
 		"rehype-katex": "^7.0.1",
 		"remark-gfm": "^4.0.1",
 		"remark-math": "^6.0.0",
-		"remote-components": "^0.0.6",
+		"remote-components": "^0.0.13",
 		"resumable-stream": "^2.2.3",
 		"shiki": "^3.9.2",
 		"tailwind-merge": "^3.3.1",

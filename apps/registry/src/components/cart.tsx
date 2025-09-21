@@ -91,22 +91,22 @@ const mockCart: ShopifyCart = {
 			cost: {
 				total_amount: {
 					amount: "19.95",
-					currency: "USD"
+					currency: "USD",
 				},
 				subtotal_amount: {
 					amount: "19.95",
-					currency: "USD"
-				}
+					currency: "USD",
+				},
 			},
 			merchandise: {
 				id: "gid://shopify/ProductVariant/14574992523362",
 				title: "3.5 oz (100g) Tin",
 				product: {
 					id: "gid://shopify/Product/1614972518498",
-					title: "Culinary Grade Matcha Powder"
-				}
-			}
-		}
+					title: "Culinary Grade Matcha Powder",
+				},
+			},
+		},
 	],
 	delivery: {},
 	discounts: {},
@@ -114,19 +114,20 @@ const mockCart: ShopifyCart = {
 	cost: {
 		total_amount: {
 			amount: "19.95",
-			currency: "USD"
+			currency: "USD",
 		},
 		subtotal_amount: {
 			amount: "19.95",
-			currency: "USD"
+			currency: "USD",
 		},
 		total_tax_amount: {
 			amount: "0.0",
-			currency: "USD"
-		}
+			currency: "USD",
+		},
 	},
 	total_quantity: 1,
-	checkout_url: "https://itoen.com/cart/c/hWN1YuVAnGXUipguqgELC4kV?key=c8fe3d5a36146ec30e34c140a072b4bc"
+	checkout_url:
+		"https://itoen.com/cart/c/hWN1YuVAnGXUipguqgELC4kV?key=c8fe3d5a36146ec30e34c140a072b4bc",
 };
 
 function formatCurrency(currency: string): string {
@@ -142,10 +143,10 @@ function formatCurrency(currency: string): string {
 	return currencySymbols[currency] || currency;
 }
 
-export function CartComponent({ 
+export function CartComponent({
 	instructions = "Your shopping cart",
 	cart = mockCart,
-	errors = []
+	errors = [],
 }: CartComponentProps) {
 	const isEmpty = cart.lines.length === 0;
 	const totalItems = cart.total_quantity;
@@ -163,7 +164,7 @@ export function CartComponent({
 				</CartTitle>
 				{!isEmpty && (
 					<Badge variant="secondary">
-						{totalItems} {totalItems === 1 ? 'item' : 'items'}
+						{totalItems} {totalItems === 1 ? "item" : "items"}
 					</Badge>
 				)}
 			</CartHeader>
@@ -179,7 +180,8 @@ export function CartComponent({
 				<CartContent>
 					<CartItems>
 						{cart.lines.map((line) => {
-							const unitPrice = parseFloat(line.cost.subtotal_amount.amount) / line.quantity;
+							const unitPrice =
+								parseFloat(line.cost.subtotal_amount.amount) / line.quantity;
 							return (
 								<CartItem key={line.id}>
 									<CartItemContent>
@@ -189,7 +191,8 @@ export function CartComponent({
 										<CartItemDetails>
 											<CartItemInfo>
 												<span>Qty: {line.quantity}</span>
-												{line.merchandise.title !== line.merchandise.product.title && (
+												{line.merchandise.title !==
+													line.merchandise.product.title && (
 													<span>• {line.merchandise.title}</span>
 												)}
 											</CartItemInfo>
@@ -220,27 +223,28 @@ export function CartComponent({
 										<span>{cart.cost.subtotal_amount.amount}</span>
 									</span>
 								</div>
-								{cart.cost.total_tax_amount && parseFloat(cart.cost.total_tax_amount.amount) > 0 && (
-									<div className="flex justify-between text-sm text-muted-foreground">
-										<span>Tax</span>
-										<span>
-											<span>{currencySymbol}</span>
-											<span>{cart.cost.total_tax_amount.amount}</span>
-										</span>
-									</div>
-								)}
+								{cart.cost.total_tax_amount &&
+									parseFloat(cart.cost.total_tax_amount.amount) > 0 && (
+										<div className="flex justify-between text-sm text-muted-foreground">
+											<span>Tax</span>
+											<span>
+												<span>{currencySymbol}</span>
+												<span>{cart.cost.total_tax_amount.amount}</span>
+											</span>
+										</div>
+									)}
 								<div className="flex justify-between font-semibold pt-1 border-t">
 									<span>Total</span>
 									<span>
-										<span>{currencySymbol}</span>
-										<span>{cart.cost.total_amount.amount}</span>
+										{currencySymbol}
+										{cart.cost.total_amount.amount}
 									</span>
 								</div>
 							</div>
 						</CartSummaryLabel>
 						<CartSummaryTotal className="sr-only">
-							<span>{currencySymbol}</span>
-							<span>{cart.cost.total_amount.amount}</span>
+							{currencySymbol}
+							{cart.cost.total_amount.amount}
 						</CartSummaryTotal>
 					</CartSummary>
 
